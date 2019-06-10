@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: "sevendbs"
+      POSTGRES_PASSWORD: "cuscuz"
+    volumes:
+      - ./events.sql:/docker-entrypoint-initdb.d/events.sql
+      - postgres-data:/var/lib/postgresql/data 
+    networks:
+      - postgres-network
+      
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "lfelixsampaio@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "cuscuz"
+    ports:
+      - "80:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+      - ./events.sql:/var/lib/pgadmin/storage/lfelixsampaio_gmail.com/events.sql
+    depends_on:
+      - postgres
+    networks:
+      - postgres-network
+
+networks: 
+  postgres-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  pgadmin-data:
